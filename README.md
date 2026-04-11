@@ -1,1 +1,2 @@
-# AI-team-project
+Frontend folder
+Backend folder
