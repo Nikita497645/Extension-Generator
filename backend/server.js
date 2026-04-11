@@ -13,3 +13,11 @@ app.get("/", (req, res) => {
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
+
+app.post("/generate", (req, res) => {
+  const { prompt } = req.body;
+
+  res.json({
+    message: `You entered: ${prompt}`,
+  });
+});
