@@ -5,6 +5,7 @@ function App() {
   const [response, setResponse] = useState("");
 
   const handleGenerate = async () => {
+    console.log("Button clicked"); 
     const res = await fetch("http://localhost:5000/generate", {
       method: "POST",
       headers: {
@@ -14,6 +15,7 @@ function App() {
     });
 
     const data = await res.json();
+    console.log(data); 
     setResponse(data.message);
   };
 
