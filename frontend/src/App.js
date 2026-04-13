@@ -3,9 +3,13 @@ import React, { useState } from "react";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false); // loading state
 
   const handleGenerate = async () => {
-    console.log("Button clicked"); 
+    
+    setLoading(true); // start loader
+
+    try {
     const res = await fetch("http://localhost:5000/generate", {
       method: "POST",
       headers: {
@@ -15,8 +19,15 @@ function App() {
     });
 
     const data = await res.json();
-    console.log(data); 
+    
     setResponse(data.message);
+    } catch (error) {
+      console.log(error);
+      setResponse("Something went wrong ❌");
+    } finally {
+      setLoading(false); // stop loader
+    }
+
   };
 
   return (
@@ -33,7 +44,13 @@ function App() {
 
       <br /><br />
 
-      <button onClick={handleGenerate}>Generate</button>
+      {/* Day 3 Updated Button */}
+      <button onClick={handleGenerate} disabled={loading}>
+        {loading ? "Generating..." : "Generate"}
+      </button>
+
+      {/* Day 3 Loader */}
+      {loading && <div className="loader"></div>}
 
       <h3>Response:</h3>
       <p>{response}</p>
