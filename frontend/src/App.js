@@ -3,54 +3,41 @@ import React, { useState } from "react";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false); // loading state
 
-  const handleGenerate = async () => {
-    
-    setLoading(true); // start loader
-
+  const handleClick = async () => {
     try {
-    const res = await fetch("http://localhost:5000/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prompt }),
-    });
+      const res = await fetch("http://127.0.0.1:5000/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
-    const data = await res.json();
-    
-    setResponse(data.message);
+      const data = await res.json();
+
+      setResponse(data.message);
     } catch (error) {
       console.log(error);
-      setResponse("Something went wrong ❌");
-    } finally {
-      setLoading(false); // stop loader
+      setResponse("Error connecting to backend");
     }
-
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Extension Generator</h2>
+      <h2>AI Generator</h2>
 
       <textarea
         rows="5"
         cols="50"
-        placeholder="Enter your idea..."
+        placeholder="Enter something..."
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
 
       <br /><br />
 
-      {/* Day 3 Updated Button */}
-      <button onClick={handleGenerate} disabled={loading}>
-        {loading ? "Generating..." : "Generate"}
-      </button>
-
-      {/* Day 3 Loader */}
-      {loading && <div className="loader"></div>}
+      <button onClick={handleClick}>Generate</button>
 
       <h3>Response:</h3>
       <p>{response}</p>
