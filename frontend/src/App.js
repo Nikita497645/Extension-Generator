@@ -22,28 +22,22 @@ function App() {
       });
 
       const data = await res.json();
+      const parsed = JSON.parse(data.message);
 
-      try {
-  const parsed = JSON.parse(data.message);
-  setFiles(parsed);
-} catch (err) {
-  console.log("RAW AI RESPONSE:", data.message);
-  alert("Still invalid JSON ❌ Check console");
-}
-
+      setFiles(parsed);
     } catch (error) {
-      alert("Server error ❌");
-    } finally {
-      setLoading(false);
+      alert("Error generating extension");
     }
+
+    setLoading(false);
   };
 
   const handleDownload = async () => {
     const zip = new JSZip();
 
     zip.file("manifest.json", files["manifest.json"]);
-    zip.file("popup.html", files["popup.html"]);
     zip.file("content.js", files["content.js"]);
+    zip.file("popup.html", files["popup.html"]);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, "extension.zip");
@@ -51,41 +45,34 @@ function App() {
 
   return (
     <div className="container">
-      <h1>🚀 Chrome Extension Generator</h1>
 
-      <div className="input-box">
-        <textarea
-          placeholder="Enter your idea..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-        <button onClick={handleGenerate}>
-          {loading ? "Generating..." : "Generate"}
-        </button>
-      </div>
+      {/* Header */}
+      <h1>Xtensio.ai</h1>
+      <p className="tagline">Create Chrome Extensions without coding</p>
 
+      {/* Input */}
+      <textarea
+        placeholder="Enter your idea here..."
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+      />
+
+      <button onClick={handleGenerate} disabled={loading}>
+        {loading ? "Generating..." : "Generate"}
+      </button>
+
+      {/* Output */}
       {files && (
         <div className="output">
-          <h2>Generated Files</h2>
+          <h3>Extension generated successfully</h3>
 
-          <div className="file-card">
-            <h3>manifest.json</h3>
-            <pre>{files["manifest.json"]}</pre>
-          </div>
+          <button onClick={handleDownload}>Download</button>
 
-          <div className="file-card">
-            <h3>popup.html</h3>
-            <pre>{files["popup.html"]}</pre>
-          </div>
-
-          <div className="file-card">
-            <h3>content.js</h3>
-            <pre>{files["content.js"]}</pre>
-          </div>
-
-          <button className="download-btn" onClick={handleDownload}>
-            ⬇ Download ZIP
-          </button>
+          <ul>
+            <li>manifest.json</li>
+            <li>content.js</li>
+            <li>popup.html</li>
+          </ul>
         </div>
       )}
     </div>

@@ -1,73 +1,50 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
+  background-color: white;
 }
 
 .container {
-  padding: 30px;
   text-align: center;
+  margin-top: 60px;
 }
 
 h1 {
-  color: #38bdf8;
+  margin-bottom: 5px;
 }
 
-.input-box {
-  margin-top: 20px;
+.tagline {
+  color: gray;
+  margin-bottom: 20px;
 }
 
+/* Input box */
 textarea {
-  width: 60%;
-  height: 120px;
+  width: 300px;
+  height: 100px;
   padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f5f5f5;
 }
 
+/* Button */
 button {
-  margin-top: 10px;
+  display: block;
+  margin: 15px auto;
   padding: 10px 20px;
   border: none;
-  background: #38bdf8;
-  color: black;
-  font-weight: bold;
-  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #0ea5e9;
+button:disabled {
+  background-color: gray;
 }
 
+/* Output */
 .output {
-  margin-top: 30px;
-}
-
-.file-card {
-  background: #1e293b;
-  margin: 15px auto;
-  padding: 15px;
-  width: 70%;
-  border-radius: 10px;
-  text-align: left;
-}
-
-pre {
-  background: black;
-  padding: 10px;
-  overflow-x: auto;
-  border-radius: 6px;
-}
-
-.download-btn {
   margin-top: 20px;
-  background: #22c55e;
-}
-
-.download-btn:hover {
-  background: #16a34a;
 }
