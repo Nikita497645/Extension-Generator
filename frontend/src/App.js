@@ -7,10 +7,12 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleGenerate = async () => {
     setLoading(true);
     setFiles(null);
+    setError("");
 
     try {
       const res = await fetch("http://localhost:5000/generate", {
@@ -22,57 +24,71 @@ function App() {
       });
 
       const data = await res.json();
-      const parsed = JSON.parse(data.message);
 
-      setFiles(parsed);
-    } catch (error) {
-      alert("Error generating extension");
+      if (!res.ok) {
+        setError(data.message);
+        console.log("RAW:", data.raw);
+        return;
+      }
+
+      setFiles(data.message);
+
+    } catch (err) {
+      setError("Server error ❌");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleDownload = async () => {
     const zip = new JSZip();
 
     zip.file("manifest.json", files["manifest.json"]);
-    zip.file("content.js", files["content.js"]);
     zip.file("popup.html", files["popup.html"]);
+    zip.file("content.js", files["content.js"]);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, "extension.zip");
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert("Copied ✅");
+  };
+
   return (
     <div className="container">
+      <h1>🚀 Xtensio AI </h1>
 
-      {/* Header */}
-      <h1>Xtensio.ai</h1>
-      <p className="tagline">Create Chrome Extensions without coding</p>
-
-      {/* Input */}
       <textarea
-        placeholder="Enter your idea here..."
+        placeholder="Enter your idea..."
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
 
-      <button onClick={handleGenerate} disabled={loading}>
+      <button onClick={handleGenerate}>
         {loading ? "Generating..." : "Generate"}
       </button>
 
-      {/* Output */}
+      {error && <p className="error">{error}</p>}
+
       {files && (
         <div className="output">
-          <h3>Extension generated successfully</h3>
+          {Object.entries(files).map(([name, content]) => (
+            <div className="file-card" key={name}>
+              <h3>{name}</h3>
 
-          <button onClick={handleDownload}>Download</button>
+              <button onClick={() => copyToClipboard(content)}>
+                Copy
+              </button>
 
-          <ul>
-            <li>manifest.json</li>
-            <li>content.js</li>
-            <li>popup.html</li>
-          </ul>
+              <pre>{content}</pre>
+            </div>
+          ))}
+
+          <button className="download-btn" onClick={handleDownload}>
+            Download ZIP
+          </button>
         </div>
       )}
     </div>
