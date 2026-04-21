@@ -18,9 +18,9 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Input box */
+/* Input */
 textarea {
-  width: 300px;
+  width: 320px;
   height: 100px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -44,12 +44,22 @@ button:disabled {
   background-color: gray;
 }
 
+/* Status */
+.status {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
 /* Output */
 .output {
   margin-top: 20px;
 }
 
-.error {
-  color: red;
-  margin-top: 10px;
+/* File Cards */
+.file-card {
+  background: #f0f0f0;
+  padding: 10px;
+  margin: 5px auto;
+  width: 200px;
+  border-radius: 5px;
 }

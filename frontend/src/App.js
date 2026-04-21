@@ -7,12 +7,17 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
 
   const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      setStatus("Please enter something first ❌");
+      return;
+    }
+
     setLoading(true);
     setFiles(null);
-    setError("");
+    setStatus("Generating...");
 
     try {
       const res = await fetch("http://localhost:5000/generate", {
@@ -24,71 +29,55 @@ function App() {
       });
 
       const data = await res.json();
+      const parsed = JSON.parse(data.message);
 
-      if (!res.ok) {
-        setError(data.message);
-        console.log("RAW:", data.raw);
-        return;
-      }
-
-      setFiles(data.message);
-
-    } catch (err) {
-      setError("Server error ❌");
-    } finally {
-      setLoading(false);
+      setFiles(parsed);
+      setStatus("Extension generated successfully ✅");
+    } catch (error) {
+      setStatus("Error occurred ❌");
     }
+
+    setLoading(false);
   };
 
   const handleDownload = async () => {
     const zip = new JSZip();
 
     zip.file("manifest.json", files["manifest.json"]);
-    zip.file("popup.html", files["popup.html"]);
     zip.file("content.js", files["content.js"]);
+    zip.file("popup.html", files["popup.html"]);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, "extension.zip");
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    alert("Copied ✅");
-  };
-
   return (
     <div className="container">
-      <h1>🚀 Xtensio AI </h1>
+
+      <h1>Xtensio.ai</h1>
+      <p className="tagline">Create Chrome Extensions without coding</p>
 
       <textarea
-        placeholder="Enter your idea..."
+        placeholder="Enter your idea here..."
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
 
-      <button onClick={handleGenerate}>
+      <button onClick={handleGenerate} disabled={loading || !prompt.trim()}>
         {loading ? "Generating..." : "Generate"}
       </button>
 
-      {error && <p className="error">{error}</p>}
+      {/* Status Message */}
+      {status && <p className="status">{status}</p>}
 
+      {/* Output */}
       {files && (
         <div className="output">
-          {Object.entries(files).map(([name, content]) => (
-            <div className="file-card" key={name}>
-              <h3>{name}</h3>
+          <button onClick={handleDownload}>Download</button>
 
-              <button onClick={() => copyToClipboard(content)}>
-                Copy
-              </button>
-
-              <pre>{content}</pre>
-            </div>
-          ))}
-
-          <button className="download-btn" onClick={handleDownload}>
-            Download ZIP
-          </button>
+          <div className="file-card">manifest.json</div>
+          <div className="file-card">content.js</div>
+          <div className="file-card">popup.html</div>
         </div>
       )}
     </div>
