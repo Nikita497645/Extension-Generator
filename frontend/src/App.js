@@ -7,50 +7,37 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("");
 
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
+    if (!prompt.trim()) return;
+
     setLoading(true);
     setFiles(null);
-    setError("");
 
-    try {
-      const res = await fetch("http://127.0.0.1:5000/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt }),
-      });
+    setTimeout(() => {
+      const generatedFiles = {
+        "manifest.json": `{
+  "manifest_version": 3,
+  "name": "Demo Extension",
+  "version": "1.0"
+}`,
+        "content.js": `console.log("Extension running");`,
+        "popup.html": `<h1>${prompt}</h1>`
+      };
 
-      const data = await res.json();
-
-      console.log("STATUS:", res.status);
-      console.log("DATA:", data);
-
-      if (!data || typeof data.message !== "object") {
-        setError("Invalid response ❌");
-        return;
-      }
-
-      setFiles(data.message);
-      setActiveTab("manifest.json");
-
-    } catch (err) {
-      console.log(err);
-      setError("Server not reachable ❌");
-    } finally {
+      setFiles(generatedFiles);
       setLoading(false);
-    }
+    }, 1000);
   };
 
   const handleDownload = async () => {
+    if (!files) return;
+
     const zip = new JSZip();
 
-    Object.entries(files).forEach(([name, content]) => {
-      zip.file(name, content || "// empty");
-    });
+    zip.file("manifest.json", files["manifest.json"]);
+    zip.file("content.js", files["content.js"]);
+    zip.file("popup.html", files["popup.html"]);
 
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, "extension.zip");
@@ -58,49 +45,34 @@ function App() {
 
   return (
     <div className="container">
-      <h1>🚀 Xtensio AI</h1>
+      <h1>🚀Xtensio.ai</h1>
+      <p>Turn your ideas into Chrome Extensions instantly with AI</p>
 
       <textarea
-        placeholder="Enter your idea..."
+        placeholder="Enter your idea here..."
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
 
       <button onClick={handleGenerate} disabled={loading}>
-        {loading ? "Generating..." : "Generate"}
+        {loading ? "Generating..." : "Generate 👆🏻"}
       </button>
-
-      {error && <p className="error">{error}</p>}
 
       {files && (
         <>
-          <div className="tabs">
-            {Object.keys(files).map((file) => (
-              <button
-                key={file}
-                className={activeTab === file ? "active" : ""}
-                onClick={() => setActiveTab(file)}
-              >
-                {file}
-              </button>
-            ))}
+          <p className="success">Extension generated successfully ✅</p>
+
+          <div className="output">
+            <h2>Generated Files</h2>
+
+            <div className="file">manifest.json</div>
+            <div className="file">content.js</div>
+            <div className="file">popup.html</div>
+
+            <button className="download-btn" onClick={handleDownload}>
+              ⬇ Download ZIP
+            </button>
           </div>
-
-          <div className="file-view">
-            <h3>{activeTab}</h3>
-            <pre>{files[activeTab]}</pre>
-          </div>
-
-          {activeTab === "popup.html" && (
-            <div className="preview">
-              <h3>Live Preview</h3>
-              <iframe title="preview" srcDoc={files["popup.html"]} />
-            </div>
-          )}
-
-          <button className="download-btn" onClick={handleDownload}>
-            Download ZIP
-          </button>
         </>
       )}
     </div>

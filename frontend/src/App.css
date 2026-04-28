@@ -1,116 +1,101 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: #ffffff;
+  background-color: #0b1b34;
+  color: white;
 }
 
 .container {
-  max-width: 900px;
-  margin: auto;
-  padding: 30px;
   text-align: center;
+  padding-top: 60px;
 }
 
 h1 {
-  color: #38bdf8;
-  margin-bottom: 20px;
+  font-size: 42px;
+  margin-bottom: 10px;
 }
 
+p {
+  color: #cbd5e1;
+  margin-bottom: 25px;
+}
+
+/* textarea */
 textarea {
-  width: 100%;
+  display: block;
+  width: 60%;
   height: 120px;
   padding: 12px;
+  margin: 0 auto;
   border-radius: 8px;
   border: none;
-  background: #1e293b;
+  outline: none;
+  background: #1e2a44;
   color: white;
-  margin-bottom: 15px;
+  font-size: 14px;
 }
 
+/* generate button */
 button {
-  padding: 10px 20px;
-  border-radius: 6px;
+  display: block;
+  margin: 20px auto;
+  padding: 14px 28px;
   background: #38bdf8;
-  color: black;
-  font-weight: bold;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: 0.2s;
 }
 
 button:hover {
   background: #0ea5e9;
+  transform: scale(1.05);
 }
 
-button:disabled {
-  opacity: 0.6;
-}
-
-.error {
-  color: #f87171;
+/* success message */
+.success {
+  color: #4ade80;
+  font-weight: bold;
   margin-top: 10px;
 }
 
-.info-text {
-  margin-top: 10px;
-  opacity: 0.7;
+/* output section */
+.output {
+  margin-top: 25px;
 }
 
-.tabs {
-  margin-top: 20px;
+.output h2 {
+  margin-bottom: 15px;
 }
 
-.tabs button {
-  margin: 5px;
-  background: #1e293b;
-  color: white;
-}
-
-.tabs button.active {
-  background: #38bdf8;
+/* file cards */
+.file {
+  background: #e5e5e5;
   color: black;
-}
-
-.file-view {
-  margin-top: 20px;
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: left;
-}
-
-pre {
-  background: black;
-  padding: 10px;
+  margin: 10px auto;
+  padding: 12px;
+  width: 250px;
   border-radius: 6px;
-  overflow-x: auto;
-  margin-top: 10px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.file-view button {
-  margin-bottom: 10px;
-  background: #22c55e;
-}
-
-.preview {
-  margin-top: 20px;
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-.preview iframe {
-  width: 100%;
-  height: 300px;
-  border: none;
-  background: white;
-}
-
+/* download button */
 .download-btn {
   margin-top: 20px;
-  background: #22c55e;
+  padding: 12px 24px;
+  background: green;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.download-btn:hover {
+  background: darkgreen;
+  transform: scale(1.05);
 }
