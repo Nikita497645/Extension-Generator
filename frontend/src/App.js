@@ -8,26 +8,35 @@ function App() {
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) return;
 
     setLoading(true);
     setFiles(null);
 
-    setTimeout(() => {
-      const generatedFiles = {
-        "manifest.json": `{
-  "manifest_version": 3,
-  "name": "Demo Extension",
-  "version": "1.0"
-}`,
-        "content.js": `console.log("Extension running");`,
-        "popup.html": `<h1>${prompt}</h1>`
-      };
+    try {
+      const res = await fetch("https://extension-generator-backend.onrender.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
-      setFiles(generatedFiles);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Error ❌");
+        return;
+      }
+
+      setFiles(data.message);
+
+    } catch (error) {
+      alert("Server error ❌");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleDownload = async () => {
