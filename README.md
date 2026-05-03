@@ -179,6 +179,16 @@ Create a dark mode Chrome extension
 
 ---
 
+## 🚀 Chrome Extension Testing
+
+- Popup UI  
+- Blocks images on websites  
+- Works on dynamic sites (YouTube)  
+
+Status: Completed ✅
+
+---
+
 ## 👩‍💻 Author
 
 Built as part of a guided learning project (Day 1–Day 4).
