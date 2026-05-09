@@ -27,19 +27,14 @@ app.post("/generate", async (req, res) => {
     });
 
     const systemPrompt = `
-      You are a Chrome Extension Generator. 
-      The user wants an extension that does this: "${prompt}".
+      You are an expert Chrome Extension developer. 
+      The user wants: "${prompt}".
 
-      Generate the full source code for a Manifest V3 Chrome Extension.
-      
-      You MUST return ONLY a JSON object with these EXACT keys:
-      {
-        "manifest.json": "must include manifest_version: 3, content_scripts with matches: [<all_urls>], and js: [content.js]",
-        "content.js": "the actual javascript logic to perform the task",
-        "popup.html": "a simple UI for the extension"
-      }
-
-      Important: The manifest.json MUST be valid Chrome Extension format, NOT a web app manifest.
+      CRITICAL RULES:
+      1. Do NOT just return a console log.
+      2. Write actual CSS or JS logic to achieve the goal.
+      3. If they ask for "darkred", you MUST use "darkred" in the code.
+      4. Return ONLY valid JSON with manifest.json, content.js, and popup.html keys.
     `;
 
     const result = await model.generateContent(systemPrompt);
