@@ -1,52 +1,53 @@
 require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 
-app.use(cors());
+// 1. UPDATE THIS: Replace with your actual Netlify URL after deployment
+app.use(cors({
+  origin: "*" // While testing, "*" allows all. For security, use your Netlify URL.
+}));
 app.use(express.json());
 
-console.log("✅ BACKEND RUNNING");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Backend working ✅");
-});
-
-// Main route (SAFE VERSION)
-app.post("/generate", (req, res) => {
-  console.log("🔥 API HIT");
-
+app.post("/generate", async (req, res) => {
   const { prompt } = req.body;
+  console.log("Generating for:", prompt);
 
-  // Always return safe data
-  res.json({
-    message: {
-      "manifest.json": `{
-  "manifest_version": 3,
-  "name": "Demo Extension",
-  "version": "1.0",
-  "action": {
-    "default_popup": "popup.html"
+  try {
+    const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        generationConfig: { responseMimeType: "application/json" }
+    });
+
+    const systemPrompt = `
+      You are an expert Chrome Extension developer. 
+      Generate a Manifest V3 extension based on this idea: "${prompt}".
+      
+      Return ONLY a JSON object with these keys:
+      "manifest.json", "content.js", "popup.html"
+      
+      The values must be the actual code as a string. No markdown backticks.
+    `;
+
+    const result = await model.generateContent(systemPrompt);
+    const responseText = result.response.text();
+    
+    // Clean and Parse
+    const extensionFiles = JSON.parse(responseText);
+
+    res.json({ message: extensionFiles });
+
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ message: "AI Error: " + error.message });
   }
-}`,
-      "popup.html": `
-        <html>
-          <body>
-            <h1>${prompt || "Hello Extension"}</h1>
-            <p>Frontend + Backend working ✅</p>
-          </body>
-        </html>
-      `,
-      "content.js": `console.log("Extension running");`,
-    },
-  });
 });
 
-// Start server
+app.get("/", (req, res) => res.send("Backend Live ✅"));
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

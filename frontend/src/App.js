@@ -8,32 +8,28 @@ function App() {
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // 1. UPDATE THIS URL
+  const BACKEND_URL = "https://extension-generator-backend-p4m9.onrender.com/generate";
+
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
-
     setLoading(true);
     setFiles(null);
 
     try {
-      const res = await fetch("https://extension-generator-backend.onrender.com", {
+      const res = await fetch(BACKEND_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Generation failed");
 
-      if (!res.ok) {
-        alert(data.message || "Error ❌");
-        return;
-      }
-
+      // Set the file object into state
       setFiles(data.message);
-
     } catch (error) {
-      alert("Server error ❌");
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -41,9 +37,9 @@ function App() {
 
   const handleDownload = async () => {
     if (!files) return;
-
     const zip = new JSZip();
 
+    // Loop through the object keys and add to ZIP
     zip.file("manifest.json", files["manifest.json"]);
     zip.file("content.js", files["content.js"]);
     zip.file("popup.html", files["popup.html"]);
@@ -54,35 +50,31 @@ function App() {
 
   return (
     <div className="container">
-      <h1>🚀Xtensio.ai</h1>
-      <p>Turn your ideas into Chrome Extensions instantly with AI</p>
+      <h1>🚀 Xtensio.ai</h1>
+      <p>Instant Chrome Extensions from your ideas</p>
 
       <textarea
-        placeholder="Enter your idea here..."
+        placeholder="e.g., An extension that makes all images on a page rotate 180 degrees"
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
 
       <button onClick={handleGenerate} disabled={loading}>
-        {loading ? "Generating..." : "Generate 👆🏻"}
+        {loading ? "Magic in progress..." : "Generate Extension"}
       </button>
 
       {files && (
-        <>
-          <p className="success">Extension generated successfully ✅</p>
-
-          <div className="output">
-            <h2>Generated Files</h2>
-
-            <div className="file">manifest.json</div>
-            <div className="file">content.js</div>
-            <div className="file">popup.html</div>
-
-            <button className="download-btn" onClick={handleDownload}>
-              ⬇ Download ZIP
-            </button>
+        <div className="output">
+          <p className="success">Ready for download! ✅</p>
+          <div className="file-list">
+            <span>📄 manifest.json</span>
+            <span>📄 content.js</span>
+            <span>📄 popup.html</span>
           </div>
-        </>
+          <button className="download-btn" onClick={handleDownload}>
+            ⬇ Download ZIP
+          </button>
+        </div>
       )}
     </div>
   );
