@@ -23,8 +23,7 @@ app.post("/generate", async (req, res) => {
   try {
     // Using the 'latest' tag to avoid 404 version errors
     const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash-latest",
-        generationConfig: { responseMimeType: "application/json" }
+        model: "gemini-3-flash-preview",
     });
 
     // 3. FORCE DYNAMIC SYSTEM PROMPT
@@ -64,9 +63,9 @@ app.post("/generate", async (req, res) => {
     res.json({ message: extensionFiles });
 
   } catch (error) {
-    console.error("❌ BACKEND ERROR:", error.message);
+    console.error("AI error details:", error.message);
     res.status(500).json({ 
-        error: "AI Generation Failed", 
+        error: "Generation Failed", 
         details: error.message 
     });
   }

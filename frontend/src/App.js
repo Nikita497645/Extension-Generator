@@ -27,7 +27,7 @@ function App() {
       if (!res.ok) throw new Error(data.message || "Generation failed");
 
       // Set the file object into state
-      setFiles(data.message);
+      setFiles(res.data.message);
     } catch (error) {
       alert(error.message);
     } finally {
